@@ -9,6 +9,7 @@ script:
 - cd vice
 - ls -l
 - sudo apt-get install xa65
+- sudo apt-get install libgtk-3-dev
 - ./autogen.sh
 - ./configure --enable-native-gtk3ui
 - make
