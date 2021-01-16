@@ -8,6 +8,7 @@ branches:
 script:
 - cd vice
 - ls -l
+- sudo apt-get install xa65
 - ./autogen.sh
 - ./configure --enable-native-gtk3ui
 - make
