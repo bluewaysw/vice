@@ -8,7 +8,8 @@ branches:
 script:
 - cd vice
 - ls -l
-- ./configure
+- ./autogen.sh
+- ./configure --enable-native-gtk3ui
 - make
 before_deploy:
 - |
