@@ -1,0 +1,29 @@
+language: minimal
+os: linux
+arch: amd64
+dist: bionic
+branches: 
+  except:
+    - CI-latest
+script:
+- cd vice
+- ls -l
+- ./configure
+- make
+before_deploy:
+- |
+  if [[ -z "$TRAVIS_TAG" ]]; then
+    export TRAVIS_TAG=CI-latest
+  fi
+deploy:
+- provider: releases
+  api_key: $GITHUB_API_KEY
+  file: 
+  - $TRAVIS_BUILD_DIR/c1541
+  skip_cleanup: true
+  prerelease: true
+  draft: false
+  overwrite: true
+  on:
+    tags: false
+    branch: master
