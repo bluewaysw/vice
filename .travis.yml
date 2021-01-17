@@ -13,7 +13,9 @@ script:
 - sudo apt-get install libglew-dev
 - ./autogen.sh
 - ./configure --enable-native-gtk3ui
-- make
+- make c1541
+- mkdir _out
+- cp c1541 _out
 before_deploy:
 - |
   if [[ -z "$TRAVIS_TAG" ]]; then
@@ -23,7 +25,7 @@ deploy:
 - provider: releases
   api_key: $GITHUB_API_KEY
   file: 
-  - $TRAVIS_BUILD_DIR/c1541
+  - $TRAVIS_BUILD_DIR/vice/_out/c1541
   skip_cleanup: true
   prerelease: true
   draft: false
