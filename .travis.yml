@@ -15,7 +15,7 @@ script:
 - ./configure --enable-native-gtk3ui
 - make 
 - mkdir _out
-- cp c1541 _out
+- cp src/c1541 _out
 before_deploy:
 - |
   if [[ -z "$TRAVIS_TAG" ]]; then
