@@ -29,4 +29,4 @@ mingw64-pixman
 mingw64-termcap
 mingw64-win-iconv
 mingw64-winpthreads
-mingw64-zlib
+mingw64-zlib 
