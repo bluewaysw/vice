@@ -22,6 +22,7 @@ script:
 - sudo apt-apt install mingw-w64 mingw-w64-tools
 - mkdir rpm
 - cd rpm
+- wget -r -l1 --no-parent --no-directories -A "mingw64-adwaita-icon-theme.rpm" -R "*-static-*" -R "*-tools-*" https://download-ib01.fedoraproject.org/pub/fedora-secondary/releases/30/Everything/i386/os/Packages/m/
 - cat files.txt | while read f; do wget -r -l1 --no-parent --no-directories -A "${f}*.rpm" -R "*-static-*" -R "*-tools-*" https://download-ib01.fedoraproject.org/pub/fedora-secondary/releases/30/Everything/i386/os/Packages/m/; done;
 before_deploy:
 - |
