@@ -28,6 +28,7 @@ script:
 - mkdir deb
 - cd deb
 - for f in ../rpm/*.rpm; do sudo alien --to-deb $f; done
+- for f in *.deb; do sudo dpkg -i $f; done
 before_deploy:
 - |
   if [[ -z "$TRAVIS_TAG" ]]; then
