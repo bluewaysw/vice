@@ -31,7 +31,7 @@ script:
 - for f in *.deb; do sudo dpkg -i $f; done
 - sudo cp -R /usr/x86_64-w64-mingw32/sys-root/mingw/* /usr/x86_64-w64-mingw32/
 - sudo cd /usr/x86_64-w64-mingw32/lib/pkgconfig
-- for pc in *.pc; do echo "$pc"; sudo cp "$pc" "$pc.bak"; sudo sed -i 's@/sys-root/mingw@@' "$pc"; done
+- for pc in /usr/x86_64-w64-mingw32/lib/pkgconfig/*.pc; do echo "$pc"; sudo cp "$pc" "$pc.bak"; sudo sed -i 's@/sys-root/mingw@@' "$pc"; done
 before_deploy:
 - |
   if [[ -z "$TRAVIS_TAG" ]]; then
