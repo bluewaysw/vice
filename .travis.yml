@@ -29,6 +29,9 @@ script:
 - cd deb
 - for f in ../rpm/*.rpm; do sudo alien --to-deb $f; done
 - for f in *.deb; do sudo dpkg -i $f; done
+- cp -R /usr/x86_64-w64-mingw32/sys-root/mingw/* /usr/x86_64-w64-mingw32/
+- cd /usr/x86_64-w64-mingw32/lib/pkgconfig
+- for pc in *.pc; do echo "$pc"; sudo cp "$pc" "$pc.bak"; sudo sed -i 's@/sys-root/mingw@@' "$pc"; done
 before_deploy:
 - |
   if [[ -z "$TRAVIS_TAG" ]]; then
