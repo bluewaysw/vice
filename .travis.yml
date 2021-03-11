@@ -32,6 +32,17 @@ script:
 - sudo cp -R /usr/x86_64-w64-mingw32/sys-root/mingw/* /usr/x86_64-w64-mingw32/
 - sudo cd /usr/x86_64-w64-mingw32/lib/pkgconfig
 - for pc in /usr/x86_64-w64-mingw32/lib/pkgconfig/*.pc; do echo "$pc"; sudo cp "$pc" "$pc.bak"; sudo sed -i 's@/sys-root/mingw@@' "$pc"; done
+- sudo sh ln -s /usr/lib/x86_64-linux-gnu/glib-2.0/glib-compile-resources /usr/bin/glib-compile-resources
+- sudo sh ln -s /usr/lib/x86_64-linux-gnu/glib-2.0/glib-compile-schemas /usr/bin/glib-compile-schemas
+- sudo sh ln -s /usr/x86_64-w64-mingw32/bin/glib-genmarshal /usr/bin/glib-genmarshal
+- sudo sh ln -s /usr/x86_64-w64-mingw32/bin/glib-mkenums /usr/bin/glib-mkenums
+- sudo glib-compile-schemas /usr/x86_64-w64-mingw32/share/glib-2.0/schemas/.
+- ./autogen.sh
+- cd ..
+- mkdir gtk3-win64-build
+- cd gtk3-win64-build
+- ../vice/configure --enable-native-gtk3ui --host=x86_64-w64-mingw32
+- make
 before_deploy:
 - |
   if [[ -z "$TRAVIS_TAG" ]]; then
