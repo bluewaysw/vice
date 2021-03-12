@@ -20,7 +20,7 @@ script:
 - sudo apt-get remove libglew-dev
 - make distclean
 - sudo apt-get install autoconf autotools-dev build-essential byacc flex git subversion vim xa65 alien p7zip-full zip texinfo gawk zip unzip
-- sudo apt-apt install mingw-w64 mingw-w64-tools
+- sudo apt-get install mingw-w64 mingw-w64-tools
 - mkdir rpm
 - cd rpm
 - wget -r -l1 --no-parent --no-directories -A "mingw64-adwaita-icon-theme.rpm" -R "*-static-*" -R "*-tools-*" https://download-ib01.fedoraproject.org/pub/fedora-secondary/releases/30/Everything/i386/os/Packages/m/
