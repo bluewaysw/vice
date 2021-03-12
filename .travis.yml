@@ -43,7 +43,7 @@ script:
 - cd ..
 - mkdir gtk3-win64-build
 - cd gtk3-win64-build
-- ../vice/configure --enable-native-gtk3ui --host=x86_64-w64-mingw32
+- ../vice/configure --enable-headlessui --host=x86_64-w64-mingw32
 - make
 before_deploy:
 - |
