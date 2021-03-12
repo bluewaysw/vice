@@ -28,7 +28,7 @@ script:
 - cd ..
 - mkdir deb
 - cd deb
-- for f in ../rpm/*.rpm; do sudo alien --to-deb $f; done
+- for f in ../rpm/*.rpm; do sudo alien --scripts --to-deb --bump 0 $f; done
 - for f in *.deb; do sudo dpkg -i $f; done
 - sudo cp -R /usr/x86_64-w64-mingw32/sys-root/mingw/* /usr/x86_64-w64-mingw32/
 - sudo cd /usr/x86_64-w64-mingw32/lib/pkgconfig
