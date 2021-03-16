@@ -18,12 +18,8 @@ script:
 - cd ..
 - mkdir deb
 - cd deb
-- for f in ../rpm/*.rpm; do sudo alien --scripts --to-deb --bump 0 $f; done
+- for f in ../rpm/*.rpm; do sudo ../build/mingw/vice-rpm-to-deb.sh $f; done
 - for f in *.deb; do sudo dpkg -i $f; done
-- sudo cp -R /usr/x86_64-w64-mingw32/sys-root/mingw/* /usr/x86_64-w64-mingw32/
-- ls -l /usr/x86_64-w64-mingw32/
-- sudo cd /usr/x86_64-w64-mingw32/lib/pkgconfig
-- for pc in /usr/x86_64-w64-mingw32/lib/pkgconfig/*.pc; do echo "$pc"; sudo cp "$pc" "$pc.bak"; sudo sed -i 's@/sys-root/mingw@@' "$pc"; done
 - sudo ln -s /usr/lib/x86_64-linux-gnu/glib-2.0/glib-compile-resources /usr/bin/glib-compile-resources
 - sudo ln -s /usr/lib/x86_64-linux-gnu/glib-2.0/glib-compile-schemas /usr/bin/glib-compile-schemas
 - sudo ln -s /usr/x86_64-w64-mingw32/bin/glib-genmarshal /usr/bin/glib-genmarshal
