@@ -9,17 +9,12 @@ script:
 - cd vice
 - ls -l
 - sudo apt-get install xa65
-- sudo apt-get install autoconf autotools-dev build-essential byacc flex git subversion vim xa65 alien p7zip-full zip texinfo gawk zip unzip
+- sudo apt-get install autoconf autotools-dev build-essential byacc flex git subversion vim xa65 alien p7zip-full zip texinfo gawk zip unzip yasm dos2unix libglib2.0-dev-bin icoutils
 - sudo apt-get install mingw-w64 mingw-w64-tools
-- mkdir rpm
-- cd rpm
-- wget -r -l1 --no-parent --no-directories -A "mingw64-adwaita-icon-theme.rpm" -R "*-static-*" -R "*-tools-*" https://download-ib01.fedoraproject.org/pub/fedora-secondary/releases/30/Everything/i386/os/Packages/m/
-- cat files.txt | while read f; do wget -r -l1 --no-parent --no-directories -A "${f}*.rpm" -R "*-static-*" -R "*-tools-*" "https://rpmfind.net/linux/fedora/linux/development/rawhide/Everything/x86_64/os/Packages/m"; done;
+- cd build/mingw
+- sudo ./frankenvice-install.sh
 - cd ..
-- mkdir deb
-- cd deb
-- for f in ../rpm/*.rpm; do sudo ../build/mingw/vice-rpm-to-deb.sh $f; done
-- for f in *.deb; do sudo dpkg -i $f; done
+- cd ..
 - sudo ln -s /usr/lib/x86_64-linux-gnu/glib-2.0/glib-compile-resources /usr/bin/glib-compile-resources
 - sudo ln -s /usr/lib/x86_64-linux-gnu/glib-2.0/glib-compile-schemas /usr/bin/glib-compile-schemas
 - sudo ln -s /usr/x86_64-w64-mingw32/bin/glib-genmarshal /usr/bin/glib-genmarshal
