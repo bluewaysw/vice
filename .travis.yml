@@ -12,7 +12,7 @@ script:
 - sudo apt-get install autoconf autotools-dev build-essential byacc flex git subversion vim xa65 alien p7zip-full zip texinfo gawk zip unzip yasm dos2unix libglib2.0-dev-bin icoutils
 - sudo apt-get install mingw-w64 mingw-w64-tools
 - cd build/mingw
-- bash ./frankenvice-install.sh
+- bash /home/travis/vice/build/mingw/frankenvice-install.sh
 - cd ..
 - cd ..
 - sudo ln -s /usr/lib/x86_64-linux-gnu/glib-2.0/glib-compile-resources /usr/bin/glib-compile-resources
