@@ -138,7 +138,7 @@ convert_rpms()
     for f in `ls "$FRANKENVICE_DOWNLOADS"`; do
         echo "..converting $f"
         # this is messed up:
-        sudo $HOME/`dirname $0`/vice-rpm-to-deb.sh "$FRANKENVICE_DOWNLOADS/$f" 2>/dev/null
+        sudo $HOME/`dirname $0`/vice-rpm-to-deb.sh "$FRANKENVICE_DOWNLOADS/$f" 
     done
 
     cd "$old_dir"
