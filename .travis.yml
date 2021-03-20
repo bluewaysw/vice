@@ -23,7 +23,8 @@ script:
 - ../vice/configure --enable-native-gtk3ui --host=x86_64-w64-mingw32  --enable-arch=no
 - make
 - mkdir $TRAVIS_BUILD_DIR/vice/_out/
-- cp c1541.exe $TRAVIS_BUILD_DIR/vice/_out/
+- cp src/c1541.exe $TRAVIS_BUILD_DIR/vice/_out/
+- cp../vice/src/c1541.exe $TRAVIS_BUILD_DIR/vice/_out/
 before_deploy:
 - |
   if [[ -z "$TRAVIS_TAG" ]]; then
