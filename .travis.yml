@@ -24,7 +24,6 @@ script:
 - make
 - mkdir $TRAVIS_BUILD_DIR/vice/_out/
 - cp src/c1541.exe $TRAVIS_BUILD_DIR/vice/_out/
-- cp../vice/src/c1541.exe $TRAVIS_BUILD_DIR/vice/_out/
 before_deploy:
 - |
   if [[ -z "$TRAVIS_TAG" ]]; then
