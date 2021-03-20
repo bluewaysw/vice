@@ -33,7 +33,7 @@ deploy:
 - provider: releases
   api_key: $GITHUB_API_KEY
   file: 
-  - $TRAVIS_BUILD_DIR/vice/_out/c1541
+  - $TRAVIS_BUILD_DIR/vice/_out/c1541.exe
   skip_cleanup: true
   prerelease: true
   draft: false
