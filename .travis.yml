@@ -11,7 +11,7 @@ script:
 - sudo apt-get install xa65
 - sudo apt-get install autoconf autotools-dev build-essential byacc flex git subversion vim xa65 alien p7zip-full zip texinfo gawk zip unzip yasm dos2unix libglib2.0-dev-bin icoutils
 - sudo apt-get install mingw-w64 mingw-w64-tools
-- cd build/mingw
+- cd vice/build/mingw
 - sudo ./frankenvice-install.sh
 - cd ..
 - cd ..
