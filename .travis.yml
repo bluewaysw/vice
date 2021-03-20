@@ -20,8 +20,8 @@ script:
 - cd ..
 - mkdir gtk3-win64-build
 - cd gtk3-win64-build
-- ../vice/configure --enable-native-gtk3ui --host=x86_64-w64-mingw32
-- make c1541.exe
+- ../vice/configure --enable-native-gtk3ui --host=x86_64-w64-mingw32  --enable-arch=no
+- make
 - mkdir $TRAVIS_BUILD_DIR/vice/_out/
 - cp c1541.exe $TRAVIS_BUILD_DIR/vice/_out/
 before_deploy:
