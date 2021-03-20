@@ -153,7 +153,7 @@ install_debs()
 {
     old_dir=`pwd`
     cd "$FRANKENVICE_DEB"
-
+    ls
     for f in *.deb; do
         echo ".. installing $f:"
         sudo dpkg -i "$f"
