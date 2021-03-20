@@ -217,6 +217,7 @@ static int copy_cmd(int nargs, char **args);
 static int delete_cmd(int nargs, char **args);
 static int extract_cmd(int nargs, char **args);
 static int extract_geos_cmd(int nargs, char **args);
+static int folder_geos_cmd(int nargs, char **args);
 static int format_cmd(int nargs, char **args);
 static int help_cmd(int nargs, char **args);
 static int info_cmd(int nargs, char **args);
@@ -417,6 +418,12 @@ const command_t command_list[] = {
       "Write GEOS Convert file <source> from the file system on a disk image.",
       1, 1,
       write_geos_cmd },
+    { "geosfolder",
+      "geosfolder <folder> <file>",
+      "Create TopDesk folder <folder> if not yet existing. Add <file> if "
+      "existing to the folder.",
+      1, 2,
+      folder_geos_cmd },
     { "geosextract",
       "geosextract <source>",
       "Extract all the files to the file system and GEOS Convert them.",
@@ -3480,14 +3487,21 @@ static int internal_write_geos_file(int unit, FILE* f)
     uint8_t geosFileStruc;
     int c = 0;
     unsigned int n;
-    int bContinue;
+    int bContinue = -1;
     int numBlks, bytesInLastBlock;
+    int blockLen = 0;
 
     /* First block of cvt file is the directory entry, rest padded with zeros */
 
     for (n = 2; n < 256; n++) {
         c = fgetc(f);
-        dirBlock[n] = (unsigned char)c;
+        if(c == EOF) {
+            bContinue = 0;
+            blockLen = n - 1;
+            dirBlock[n] = (unsigned char)0;
+        } else {
+            dirBlock[n] = (unsigned char)c;
+        }
     }
 
     /* copy to the already created slot */
@@ -3545,6 +3559,11 @@ static int internal_write_geos_file(int unit, FILE* f)
         return FD_WRTERR;
     }
 
+    if(!bContinue) {
+        vlirBlock[0] = 0;
+        vlirBlock[1] = blockLen;
+    }
+
     if (vdrive_write_sector(drives[unit], vlirBlock, vlirTrk, vlirSec) != 0) {
         fprintf(stderr, "disk full\n");
         return FD_WRTERR;
@@ -3564,7 +3583,7 @@ static int internal_write_geos_file(int unit, FILE* f)
         lastSec = vlirSec;
         aktTrk = vlirTrk;
         aktSec = vlirSec;
-        bContinue = (vlirBlock[0] != 0);
+        /*bContinue = (vlirBlock[0] != 0);*/
         while (bContinue) {
             block[0] = 0;
             block[1] = 255;
@@ -3800,6 +3819,142 @@ static int write_geos_cmd(int nargs, char **args)
     lib_free(dest_name_petscii);
 
     return erg;
+}
+
+
+/* Author:      DiSc
+ * Date:        2000-07-28
+ * Write a geos .cvt file to the diskimage
+ * This code was copied from the write_cmd function.
+ */
+static int folder_geos_cmd(int nargs, char **args)
+{
+    int dev;
+    int erg;
+    char *folder_name_ascii, *file_name_ascii;
+    uint8_t* e;
+    vdrive_dir_context_t dir;
+    char *p;
+    int unit;
+    uint8_t infoBlock[256];
+    uint8_t folderNo;
+
+    unit = extract_unit_from_file_name(args[1], &p);
+    if (unit > 0) {
+        dev = unit - DRIVE_UNIT_MIN;
+    } else if (unit == 0) {
+        /* no @<unit>: found */
+        dev = drive_index;
+        unit = drive_index + DRIVE_UNIT_MIN;
+    } else {
+        /* -1, invalid unit number */
+        return FD_BADDEV;
+    }
+
+    if (check_drive_ready(dev) < 0) {
+        return FD_NOTREADY;
+    }
+
+    if (p == NULL || *p == '\0') {
+        fprintf(stderr,
+                "missing filename\n");
+        return FD_BADNAME;
+    } else {
+        folder_name_ascii = lib_strdup(p);
+    }
+
+    if (!is_valid_cbm_file_name(folder_name_ascii)) {
+        fprintf(stderr,
+                "`%s' is not a valid CBM DOS file name\n", folder_name_ascii);
+        lib_free(folder_name_ascii);
+        return FD_BADNAME;
+    }
+
+    file_name_ascii = lib_strdup(args[2]);
+
+    /*
+     * We use this to pass to vdrive_iec_open() as its `cmd_parse_ext` argument
+     * to tell the function to look for USR files. Without this the function
+     * defaults to looking for PRG files and will fail to locate the GEOS file
+     * requested.
+     */
+
+    /* Start: copied from vdrive_iec_close
+     * The bam and directory entry must be copied to the disk. the code
+     * from the vdrive routines does that thing.
+     */
+    vdrive_dir_find_first_slot(drives[dev], folder_name_ascii,
+                               (int)strlen(folder_name_ascii), 0, &dir);
+    e = vdrive_dir_find_next_slot(&dir);
+
+    if (!e) {
+        fprintf(stderr,
+            "cannot find folder `%s'\n", folder_name_ascii);
+        drives[dev]->buffers[1].mode = BUFFER_NOT_IN_USE;
+        lib_free(drives[dev]->buffers[1].buffer);
+        drives[dev]->buffers[1].buffer = NULL;
+
+        vdrive_command_set_error(drives[dev], CBMDOS_IPE_DISK_FULL, 0, 0);
+
+	lib_free(folder_name_ascii);
+	lib_free(file_name_ascii);
+        return SERIAL_ERROR;
+    }
+
+    /* get geos info block of folder to get folder number */
+    /* read info block */
+    if (vdrive_read_sector(drives[dev], infoBlock, 
+               dir.buffer[dir.slot * 32 + 2 + 19], 
+               dir.buffer[dir.slot * 32 + 2 + 20]) != 0) {
+        fprintf(stderr,
+                "cannot read input file info block `%s': %s\n",
+                folder_name_ascii, strerror(errno));
+        lib_free(folder_name_ascii);
+	lib_free(file_name_ascii);
+        return FD_RDERR;
+    }
+
+    folderNo  = infoBlock[117];
+    fprintf(stderr, "creating folder `%s' %d\n", args[1], folderNo);
+
+    vdrive_dir_find_first_slot(drives[dev], file_name_ascii,
+                               (int)strlen(file_name_ascii), 0, &dir);
+    e = vdrive_dir_find_next_slot(&dir);
+
+    if (!e) {
+        fprintf(stderr,
+            "cannot find file `%s'\n", file_name_ascii);
+        drives[dev]->buffers[1].mode = BUFFER_NOT_IN_USE;
+        lib_free(drives[dev]->buffers[1].buffer);
+        drives[dev]->buffers[1].buffer = NULL;
+
+        vdrive_command_set_error(drives[dev], CBMDOS_IPE_DISK_FULL, 0, 0);
+
+	lib_free(folder_name_ascii);
+	lib_free(file_name_ascii);
+        return SERIAL_ERROR;
+    }
+
+    if(dir.slot == 0) {
+        dir.buffer[32] = folderNo;
+    } else {
+	dir.buffer[32*dir.slot+1] = folderNo;
+    }
+
+#ifdef DEBUG_DRIVE
+    log_debug("DEBUG: closing, write DIR slot (%u %u) and BAM.",
+            dir.track, dir.sector);
+#endif
+    vdrive_write_sector(drives[dev], dir.buffer, dir.track, dir.sector);
+    vdrive_bam_write_bam(drives[dev]);
+    drives[dev]->buffers[1].mode = BUFFER_NOT_IN_USE;
+    lib_free((char *)drives[dev]->buffers[1].buffer);
+    drives[dev]->buffers[1].buffer = NULL;
+
+    lib_free(folder_name_ascii);
+    lib_free(file_name_ascii);
+
+    return FD_OK;
 }
 
 
