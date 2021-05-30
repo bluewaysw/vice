@@ -3830,7 +3830,6 @@ static int write_geos_cmd(int nargs, char **args)
 static int folder_geos_cmd(int nargs, char **args)
 {
     int dev;
-    int erg;
     char *folder_name_ascii, *file_name_ascii;
     uint8_t* e;
     vdrive_dir_context_t dir;
@@ -3915,7 +3914,7 @@ static int folder_geos_cmd(int nargs, char **args)
     }
 
     folderNo  = infoBlock[117];
-    fprintf(stderr, "creating folder `%s' %d\n", args[1], folderNo);
+    printf("assiging file `%s' to folder '%s' (no %d)\n", args[1], file_name_ascii, folderNo);
 
     vdrive_dir_find_first_slot(drives[dev], file_name_ascii,
                                (int)strlen(file_name_ascii), 0, &dir);
